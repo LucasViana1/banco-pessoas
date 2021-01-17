@@ -13,14 +13,25 @@ const Person = ({ infos, searchPeople, edit }) => {
 	return (
 		<S.PersonCard>
 			<S.PersonInfos>
-				<div>Nome completo: {`${name} ${lastName}`}</div>
-				<div>Gênero: {gender}</div>
-				<div>Ano nascimento: {birthYear}</div>
+				<div>
+					<S.InfoTitle>Nome completo: </S.InfoTitle>
+					<S.InfoText>{`${name} ${lastName}`}</S.InfoText>
+				</div>
+
+				<div>
+					<S.InfoTitle>Gênero: </S.InfoTitle>
+					<S.InfoText>{gender}</S.InfoText>
+				</div>
+				
+				<div>
+					<S.InfoTitle>Ano nascimento:</S.InfoTitle>
+					<S.InfoText>{birthYear}</S.InfoText>
+				</div>
 			</S.PersonInfos>
 
 			<S.PersonActions>
-				<button onClick={() => edit(infos)}>Editar</button>
-				<button onClick={handleDeletePeople}>Excluir</button>
+				<S.ActionButton onClick={() => edit(infos)}>Editar</S.ActionButton>
+				<S.ActionButton isDanger onClick={handleDeletePeople}>Excluir</S.ActionButton>
 			</S.PersonActions>
 		</S.PersonCard>
 	)
