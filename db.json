@@ -1,0 +1,32 @@
+{
+  "people": [
+    {
+      "name": "Lucas",
+      "lastName": "Cunha.",
+      "gender": "male",
+      "birthYear": "1998",
+      "id": 1
+    },
+    {
+      "name": "João",
+      "lastName": "Silva",
+      "gender": "male",
+      "birthYear": "1990",
+      "id": 2
+    },
+    {
+      "name": "Camila",
+      "lastName": "Rosa",
+      "gender": "female",
+      "birthYear": "1999",
+      "id": 3
+    },
+    {
+      "name": "Eder",
+      "lastName": "Santos",
+      "gender": "male",
+      "birthYear": "1999",
+      "id": 4
+    }
+  ]
+}
