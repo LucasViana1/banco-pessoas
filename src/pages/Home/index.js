@@ -1,130 +1,79 @@
 import { memo, useCallback, useEffect, useState } from 'react';
 
 import Person from '../../components/Person';
+import SaveForm from '../../components/SaveForm';
+import Filter from '../../components/Filter';
 
 import * as S from './styles';
-import api from '../../utils/api'
+import api from '../../utils/api';
+import useDebounce from '../../utils/useDebounce';
 
-const INITIAL_PEOPLE = {
+const INITIAL_FILTERS = {
 	name: '',
 	lastName: '',
-	gender: 'male',
+	gender: '',
 	birthYear: '',
-	// hobbies: ['hobbie 1'],
-	// skills: [''],
-};
+}
 
 const Home = () => {
-	const [people, setPeople] = useState(INITIAL_PEOPLE);
 	const [peopleList, setPeopleList] = useState([]);
-	// const [peopleHobbies, setPeopleHobbies] = useState(['hobbie 1'])
+	const [peoplefilters, setPeopleFilters] = useState(INITIAL_FILTERS);
+	const [peopleDataEdit, setPeopleDataEdit] = useState();
+	const debouncedSearchTerm = useDebounce(peoplefilters, 500);
+
+	const formattedFilters = useCallback((filters) => {
+		let currentFilters = {};
+
+		if(filters.name){
+			currentFilters = {...currentFilters, name: filters.name};
+		}
+
+		if(filters.lastName){
+			currentFilters = {...currentFilters, lastName: filters.lastName};
+		}
+
+		if(filters.gender){
+			currentFilters = {...currentFilters, gender: filters.gender};
+		}
+
+		if(filters.birthYear){
+			currentFilters = {...currentFilters, birthYear: filters.birthYear};
+		}
+
+		return new URLSearchParams(currentFilters).toString();
+	}, []);
+
+	const searchPeople = useCallback((filters = {}) => {
+		api.get(`/people?${formattedFilters(filters)}`).then(({ data }) => setPeopleList(data))
+	}, [formattedFilters])
 
 	useEffect(() => {
-		api.get('/people').then(({ data }) => setPeopleList(data))
-	}, [])
-
-	const handleAddInput = useCallback((type) => {
-		if(type === 'hobbie') {
-			const hobbies = people.hobbies;
-			hobbies.push(`hobbie ${hobbies.length + 1}`)
-			// console.log('hobbies')
-			// console.log(hobbies)
-			setPeople((oldPeople) => ({ ...oldPeople, hobbies }))
+		if(debouncedSearchTerm){
+			searchPeople(debouncedSearchTerm)
 		}
-	}, [people.hobbies])
+	}, [debouncedSearchTerm, searchPeople])
 
-	const handleRemoveInput = useCallback((type, index) => {
-		if(type === 'hobbie') {
-			const hobbies = people.hobbies;
-			hobbies.splice(index , 1);
-			setPeople((oldPeople) => ({ ...oldPeople, hobbies }))
-		}
-	}, [people.hobbies])
-
-	const handleChange = useCallback((event) => {
+	const handleFilterPeople = useCallback((event) => {
 		const { name, value } = event.target;
+		const [ key ] = name.split('-');
 
-		if(name.includes('hobbie')) {
-			const [, inputIndex] = name.split('-');
-			console.log('inputIndex')
-			console.log(inputIndex)
-			setPeople((oldPeople) => ({	
-				...oldPeople, 
-				hobbies: oldPeople.hobbies.map((hobbie, currentIndex) => currentIndex === Number(inputIndex) ? value : hobbie)
-			}));
-		}
-
-		else {
-			setPeople((oldPeople) => ({ ...oldPeople, [name]: value }));
-		}
-
-		// console.log(event);
-
+		setPeopleFilters((oldFilters) => ({ ...oldFilters, [key]: value }))
 	}, [])
 
-	const handleSubmit = useCallback((event) => {
-		event.preventDefault();
-		console.log('submit');
-		api.post('/people', {
-			...people
-		})
-	}, [people])
+	const handleEditPeople = useCallback((peopleData) => {
+		console.log(peopleData)
+		setPeopleDataEdit(peopleData);
+		window.scroll(0,0);
+	}, [])
 
 	return (
 		<S.HomeSection>
-			<S.HomeForm onSubmit={handleSubmit}>
-				<fieldset>
-					<label htmlFor="name">
-						Nome:
-						<input id="name" name="name" value={people.name} onChange={handleChange} />
-					</label>
-
-					<label htmlFor="lastName">
-						Sobrenome:
-						<input id="lastName" name="lastName" value={people.lastName} onChange={handleChange} />
-					</label>
-
-					<label htmlFor="gender">
-						Gênero:
-						<select id="gender" name="gender" value={people.gender} onChange={handleChange}>
-							<option value="male">Masculino</option>
-							<option value="female">Feminino</option>	
-						</select>
-					</label>
-
-					<label htmlFor="birthYear">
-						Ano nascimento:
-						<input type="number" id="birthYear" name="birthYear" value={people.birthYear} onChange={handleChange} />
-					</label>
-				</fieldset>
-
-				{/* <fieldset>
-					<div>
-						<button onClick={() => handleAddInput('hobbie')}>+</button>
-						Hobbies: 
-					</div>
-					{people.hobbies.map((hobbie, index) => (
-						<label key={hobbie} htmlFor={`hobbie-${index}`}>
-							<button onClick={() => handleRemoveInput('hobbie', index)}>-</button>
-							<input id={`hobbie-${index}`} name={`hobbie-${index}`} value={hobbie}  onChange={handleChange}/>
-						</label>
-					))}
-				</fieldset> */}
-					{/* onChange={({ target }) => setPeopleHobbies((oldPeopleHobbies) => oldPeopleHobbies.map((item, i) => (i === index ? item : target.value)))} */}
-
-				{/* <fieldset>
-					<label htmlFor="skills">
-						Habilidades:
-						<input id="skills" name="skills" value={people.skills} onChange={handleChange} />
-					</label>
-				</fieldset> */}
-				<button type="submit">Criar</button>
-			</S.HomeForm>
+			<SaveForm searchPeople={searchPeople} people={peopleDataEdit} />
 
 			<S.PeopleList>
-				<input placeholder="Search for a person" />
-				{console.log(people)}
-				{peopleList.map(item => <Person key={item.id} infos={item} />)}
+				<Filter filterPeople={handleFilterPeople} />
+				
+				{peopleList.map(item => <Person key={item.id} infos={item} searchPeople={searchPeople} edit={handleEditPeople} />)}
 			</S.PeopleList>
 
 		</S.HomeSection>
