@@ -2,12 +2,13 @@ import styled from 'styled-components';
 
 export const FormContainer = styled.form`
 	flex: 1;
+	padding: 1rem;
 	
 	fieldset {
 		border: none;
 	}
 
-  label {
+  	label {
 		display: flex;
 		margin-bottom: 0.8rem;
 		
@@ -18,7 +19,7 @@ export const FormContainer = styled.form`
 	}
 	
 	button {
-		background-color: #0700ed;
+		background-color: #00d815;
 		color: #fff;
 		font-weight: 700;
 		font-size: 1.1rem;
@@ -27,7 +28,7 @@ export const FormContainer = styled.form`
 		min-width: 5rem;
 
 		&:hover {
-			background-color: #0122c6;
+			background-color: #00bf13;
 		}
 	}
 `;

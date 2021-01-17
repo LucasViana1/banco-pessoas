@@ -44,24 +44,23 @@ const Home = () => {
 	}, []);
 
 	const searchPeople = useCallback((filters = {}) => {
-		api.get(`/people?${formattedFilters(filters)}`).then(({ data }) => setPeopleList(data))
-	}, [formattedFilters])
+		api.get(`/people?${formattedFilters(filters)}`).then(({ data }) => setPeopleList(data));
+	}, [formattedFilters]);
 
 	useEffect(() => {
 		if(debouncedSearchTerm){
-			searchPeople(debouncedSearchTerm)
+			searchPeople(debouncedSearchTerm);
 		}
-	}, [debouncedSearchTerm, searchPeople])
+	}, [debouncedSearchTerm, searchPeople]);
 
 	const handleFilterPeople = useCallback((event) => {
 		const { name, value } = event.target;
 		const [ key ] = name.split('-');
 
-		setPeopleFilters((oldFilters) => ({ ...oldFilters, [key]: value }))
+		setPeopleFilters((oldFilters) => ({ ...oldFilters, [key]: value }));
 	}, [])
 
 	const handleEditPeople = useCallback((peopleData) => {
-		console.log(peopleData)
 		setPeopleDataEdit(peopleData);
 		window.scroll(0,0);
 	}, [])
@@ -70,21 +69,15 @@ const Home = () => {
 		<S.HomeSection>
 			<SaveForm searchPeople={searchPeople} people={peopleDataEdit} />
 
-			<S.PeopleList>
+			<S.PeopleContent>
 				<Filter filterPeople={handleFilterPeople} />
 				
-				{peopleList.map(item => <Person key={item.id} infos={item} searchPeople={searchPeople} edit={handleEditPeople} />)}
-			</S.PeopleList>
-
+				<S.PeopleList>
+					{peopleList.map(item => <Person key={item.id} infos={item} searchPeople={searchPeople} edit={handleEditPeople} />)}
+				</S.PeopleList>
+			</S.PeopleContent>
 		</S.HomeSection>
 	)
 }
 
 export default memo(Home);
-
-// name
-// lastName
-// gender
-// birthYear
-// hobbies
-// skills

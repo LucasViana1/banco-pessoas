@@ -13,7 +13,7 @@ export const HomeForm = styled.form`
 		border: none;
 	}
 
-  label {
+	label {
 		display: flex;
 		margin-bottom: 0.8rem;
 		
@@ -38,9 +38,14 @@ export const HomeForm = styled.form`
 	}
 `;
 
+export const PeopleContent = styled.div`
+	flex: 2;
+	display: flex;
+	flex-direction: column;
+	padding: 1rem;
+`;
+
 export const PeopleList = styled.div`
-  flex: 2;
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
+    display: flex;
+    flex-wrap: wrap;
 `;

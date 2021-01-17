@@ -14,12 +14,6 @@ export default createGlobalStyle`
     font-family: 'Roboto', sans-serif;
   }
 
-  /* #app{
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 70px 0px;
-  } */
-
   button{
     cursor: pointer;
     background: none;
@@ -29,8 +23,4 @@ export default createGlobalStyle`
     font: inherit;
     outline: inherit;
   }
-
-  /* table{
-    border-spacing: 0;
-  } */
 `;
